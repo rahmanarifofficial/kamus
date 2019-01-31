@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Kamus (Inggris - Indonesia)</string>
+    <string name="loading">Memuat Data</string>
+    <string name="inggris_indonesia"><![CDATA[Inggris -> Indonesia]]></string>
+    <string name="indonesia_inggris"><![CDATA[Indonesia -> Inggris]]></string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_first_run">app first run</string>
+</resources>

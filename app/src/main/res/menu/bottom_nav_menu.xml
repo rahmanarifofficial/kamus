@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/kamusinggris"
+        android:title="@string/inggris_indonesia"
+        android:icon="@drawable/ic_bookmark_black_24dp"/>
+    <item
+        android:id="@+id/kamusindonesia"
+        android:title="@string/indonesia_inggris"
+        android:icon="@drawable/ic_bookmark_black_24dp"/>
+
+</menu>
