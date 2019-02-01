@@ -2,6 +2,7 @@ package com.rahmanarif.kamusinggris_indonesia;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.SQLException;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         KamusDbHelper kamusDbHelper;
         AppPreferences appPreferences;
         double progress;
-        double maxProgress;
+        double maxProgress = 100;
 
         @Override
         protected void onPreExecute() {
@@ -47,36 +48,37 @@ public class MainActivity extends AppCompatActivity {
             Boolean firstRun = appPreferences.getFirstRun();
 
             if (firstRun) {
-                ArrayList<Kamus> kamus = preLoadRaw();
-                kamusDbHelper.open();
-
-                progress = 30;
+                ArrayList<Kamus> kamusesEnglish = preLoadRaw(R.raw.english_indonesia);
+                ArrayList<Kamus> kamusesIndonesia = preLoadRaw(R.raw.indonesia_english);
                 publishProgress((int) progress);
-                Double progressMaxInsert = 80.0;
-                Double progressDiff = (progressMaxInsert - progress) / kamus.size();
 
-                kamusDbHelper.beginTransaction();
                 try {
-                    for (Kamus data : kamus) {
-                        kamusDbHelper.insertTransaction(data);
-                        progress += progressDiff;
-                        publishProgress((int) progress);
-                    }
-                    kamusDbHelper.setTransactionSuccess();
-                } catch (Exception e) {
+                    kamusDbHelper.open();
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                kamusDbHelper.endTransaction();
+
+                Double progressMaxInsert = 100.0;
+                Double progressDiff = (progressMaxInsert - progress) / (kamusesEnglish.size() + kamusesIndonesia.size());
+
+                kamusDbHelper.insertTransaction(kamusesEnglish, true);
+                progress += progressDiff;
+                publishProgress((int) progress);
+
+                kamusDbHelper.insertTransaction(kamusesIndonesia, false);
+                progress += progressDiff;
+                publishProgress((int) progress);
+
                 kamusDbHelper.close();
                 appPreferences.setFirstRun(false);
                 publishProgress((int) maxProgress);
             } else {
                 try {
-                    synchronized (this){
-                        this.wait(2000);
+                    synchronized (this) {
+                        this.wait(1000);
                         publishProgress(50);
-                        this.wait(2000);
-                        publishProgress((int)maxProgress);
+                        this.wait(30);
+                        publishProgress((int) maxProgress);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -98,22 +100,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList<Kamus> preLoadRaw() {
+    public ArrayList<Kamus> preLoadRaw(int data) {
         ArrayList<Kamus> kamuses = new ArrayList<>();
-        String line = null;
-        BufferedReader reader_dict_inggris, reader_dict_indo;
+        BufferedReader reader;
         try {
             Resources res = getResources();
-            InputStream raw_dict_inggris = res.openRawResource(R.raw.english_indonesia);
-            InputStream raw_dict_indo = res.openRawResource(R.raw.indonesia_english);
-
-            reader_dict_inggris = new BufferedReader(new InputStreamReader(raw_dict_inggris));
-            reader_dict_indo = new BufferedReader(new InputStreamReader(raw_dict_indo));
-
-            int count = 0;
-
+            InputStream raw_dict = res.openRawResource(data);
+            reader = new BufferedReader(new InputStreamReader(raw_dict));
+            String line = null;
+            int count=0;
             do {
-                line = reader_dict_inggris.readLine();
+                line = reader.readLine();
                 String[] splitstr = line.split("\t");
 
                 Kamus kamus;

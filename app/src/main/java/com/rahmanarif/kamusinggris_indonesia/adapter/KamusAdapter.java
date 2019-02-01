@@ -1,6 +1,7 @@
 package com.rahmanarif.kamusinggris_indonesia.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,17 +11,13 @@ import android.widget.TextView;
 
 import com.rahmanarif.kamusinggris_indonesia.R;
 import com.rahmanarif.kamusinggris_indonesia.model.Kamus;
+import com.rahmanarif.kamusinggris_indonesia.ui.activity.DetailActivity;
 
 import java.util.ArrayList;
 
 public class KamusAdapter extends RecyclerView.Adapter<KamusAdapter.KamusViewHolder> {
     private ArrayList<Kamus> data = new ArrayList<>();
     private Context context;
-
-    public KamusAdapter(Context context) {
-        this.context = context;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
 
     public void addItem(ArrayList<Kamus> data) {
         this.data = data;
@@ -34,8 +31,17 @@ public class KamusAdapter extends RecyclerView.Adapter<KamusAdapter.KamusViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull KamusViewHolder kamusViewHolder, int i) {
+    public void onBindViewHolder(@NonNull KamusViewHolder kamusViewHolder, final int i) {
         kamusViewHolder.tvKata.setText(data.get(i).getKata());
+        kamusViewHolder.tvKata.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.getContext().startActivity(new Intent(v.getContext(), DetailActivity.class)
+                        .putExtra(DetailActivity.EXTRA_KATA, data.get(i).getKata())
+                        .putExtra(DetailActivity.EXTRA_ARTI, data.get(i).getArti())
+                );
+            }
+        });
     }
 
     @Override
@@ -61,5 +67,6 @@ public class KamusAdapter extends RecyclerView.Adapter<KamusAdapter.KamusViewHol
             super(itemView);
             tvKata = itemView.findViewById(R.id.kata);
         }
+
     }
 }

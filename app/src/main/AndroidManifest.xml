@@ -16,7 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.KamusActivity"></activity>
+        <activity android:name=".ui.activity.KamusActivity" />
+        <activity android:name=".ui.activity.DetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activity.KamusActivity" />
+        </activity>
     </application>
 
 </manifest>
